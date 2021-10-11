@@ -2,11 +2,13 @@ defmodule RemoteWeb.Router do
   use RemoteWeb, :router
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
-  scope "/api", RemoteWeb do
-    pipe_through :api
+  scope "/", RemoteWeb do
+    pipe_through(:api)
+
+    get("/", UserController, :index)
   end
 
   # Enables LiveDashboard only for development
@@ -20,8 +22,8 @@ defmodule RemoteWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through [:fetch_session, :protect_from_forgery]
-      live_dashboard "/dashboard", metrics: RemoteWeb.Telemetry
+      pipe_through([:fetch_session, :protect_from_forgery])
+      live_dashboard("/dashboard", metrics: RemoteWeb.Telemetry)
     end
   end
 end
