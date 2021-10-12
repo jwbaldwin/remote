@@ -23,7 +23,7 @@ To view this route run: `mix phx.routes`
     user_path  GET  /                       RemoteWeb.UserController :index
 ```
 
-Calling this endpoints at `localhost:4000/` yeilds a result that looks like any of the following:
+Calling this endpoints at [`localhost:4000/`](http://localhost:4000/)` yeilds a result that looks like any of the following:
 
 Users and a previous querie's timestamp:
 ```
