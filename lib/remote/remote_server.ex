@@ -98,7 +98,7 @@ defmodule Remote.RemoteServer do
   def handle_info(:update_server, state) do
     Users.update_all_users()
 
-    new_state = state |> update_timestamp()
+    new_state = state |> update_max_number()
 
     schedule_update()
 
@@ -112,6 +112,10 @@ defmodule Remote.RemoteServer do
 
   defp update_timestamp(state) do
     %{state | timestamp: Time.utc_now()}
+  end
+
+  defp update_max_number(state) do
+    %{state | max_number: Enum.random(0..100)}
   end
 
   @doc false
