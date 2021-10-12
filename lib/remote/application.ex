@@ -15,9 +15,10 @@ defmodule Remote.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Remote.PubSub},
       # Start the Endpoint (http/https)
-      RemoteWeb.Endpoint
-      # Start a worker by calling: Remote.Worker.start_link(arg)
-      # {Remote.Worker, arg}
+      RemoteWeb.Endpoint,
+
+      # Start the RemoteServer that will perform updates and service the api
+      Remote.RemoteServer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
