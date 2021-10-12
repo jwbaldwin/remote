@@ -11,16 +11,21 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 To manually run seeds (also run during `mix ecto.setup`):
   * Run command `mix run remote.db.seeds`
 
-## Api
+To run all of the tests at once:
+  * Run command `mix test`
 
-To view all routes run: `mix phx.routes`
+## Usage
+The application exposes a single endpoint ("/"), which is the client's interface into our system.
+
+To view this route run: `mix phx.routes`
 
 ```
     user_path  GET  /                       RemoteWeb.UserController :index
 ```
 
-Calling this endpoints at `localhost:4000/` yeilds the result:
+Calling this endpoints at `localhost:4000/` yeilds a result that looks like any of the following:
 
+Users and a previous querie's timestamp:
 ```
 {
   "users":[{"id":999885,"points":84},{"id":999886,"points":98}], 
@@ -28,8 +33,16 @@ Calling this endpoints at `localhost:4000/` yeilds the result:
 }
 ```
 
+No users, and no previous query:
+```
+{
+  "users":[], 
+  "timestamp": null
+}
+```
 
-## Livebook Notebooks
+
+## Livebook Notebook
 I created a [Livebook](https://github.com/elixir-nx/livebook) notebook to document the api logic as well as the GenServer logic!
 These notebooks can be opened them with Livebook, and follow [this guide](https://fly.io/blog/livebook-for-app-documentation/) from fly.io to run this notebook within the context of the appliction.
 
