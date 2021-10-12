@@ -120,13 +120,6 @@ defmodule Remote.RemoteServer do
 
   @doc false
   defp interval() do
-    case Mix.env() do
-      # one hundred ms for tests
-      :test -> 1_000
-      # one minute
-      :dev -> 60_000
-      # one minute
-      :prod -> 60_000
-    end
+    Application.get_env(:remote, :server_update_interval, 60_000)
   end
 end

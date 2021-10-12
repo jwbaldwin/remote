@@ -25,3 +25,6 @@ config :logger, level: :warn
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Configure the remote_server to update ever second in test env
+config :remote, :server_update_interval, 1_000
