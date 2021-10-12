@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.Remote.Db.Seeds do
   @moduledoc """
-  Creates a task for populating the database with 1_000_000 users.
+  A mix task for seeding the database with 1_000_000 users.
   Can be extended to provide different seeds for each environment.
 
   This module is called during `mix ecto.setup`
@@ -15,6 +15,7 @@ defmodule Mix.Tasks.Remote.Db.Seeds do
 
   @total_users 1_000_000
 
+  @impl Mix.Task
   def run(_) do
     Mix.Task.run("app.start", [])
     seed(Mix.env())

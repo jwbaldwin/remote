@@ -10,11 +10,20 @@ defmodule Remote.RemoteServer do
   alias Remote.Users
   alias Remote.Users.User
 
-  @one_minute 1000 * 60
   @type server_response :: %{
           timestamp: DateTime.t() | nil,
           users: [User.t()]
         }
+
+  defmodule State do
+    @type t :: %__MODULE__{
+            max_number: 0..100,
+            timestamp: nil | DateTime.t()
+          }
+
+    @moduledoc false
+    defstruct [:max_number, :timestamp]
+  end
 
   #
   # Client
@@ -39,7 +48,7 @@ defmodule Remote.RemoteServer do
   Start the genserver with the default initial values
   """
   def start_link(max_number, timestamp) do
-    case GenServer.start_link(RemoteServer, %{max_number: max_number, timestamp: timestamp},
+    case GenServer.start_link(RemoteServer, %State{max_number: max_number, timestamp: timestamp},
            name: RemoteServer
          ) do
       {:ok, pid} ->
@@ -59,7 +68,7 @@ defmodule Remote.RemoteServer do
   """
   @spec find_users() :: {:ok, server_response()}
   def find_users() do
-    response = GenServer.call(RemoteServer, :users)
+    response = GenServer.call(RemoteServer, :find_users)
     {:ok, response}
   end
 
@@ -68,7 +77,7 @@ defmodule Remote.RemoteServer do
   #
 
   @impl true
-  def init(%{max_number: _max_number, timestamp: nil} = initial_state) do
+  def init(%State{max_number: _max_number, timestamp: nil} = initial_state) do
     # Schedule periodic server update
     schedule_update()
 
@@ -76,7 +85,7 @@ defmodule Remote.RemoteServer do
   end
 
   @impl true
-  def handle_call(:users, _from, state) do
+  def handle_call(:find_users, _from, state) do
     users = Users.find_users(state.max_number)
 
     new_state = state |> update_timestamp()
@@ -97,7 +106,7 @@ defmodule Remote.RemoteServer do
 
   @doc false
   defp schedule_update() do
-    Process.send_after(self(), :update_server, @one_minute)
+    Process.send_after(self(), :update_server, interval())
   end
 
   defp update_timestamp(state) do
@@ -108,5 +117,17 @@ defmodule Remote.RemoteServer do
   defp current_time() do
     DateTime.utc_now()
     |> DateTime.truncate(:second)
+  end
+
+  @doc false
+  defp interval() do
+    case Mix.env() do
+      # one hundred ms for tests
+      :test -> 1_000
+      # one minute
+      :dev -> 60_000
+      # one minute
+      :prod -> 60_000
+    end
   end
 end

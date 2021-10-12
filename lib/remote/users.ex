@@ -9,8 +9,8 @@ defmodule Remote.Users do
   alias Remote.Users.User
 
   @doc """
-  Returns all users with :points greater than max_number
-  Accepts an optional second parameter for how many results to return. Default is 2
+  Returns all users with :points greater than max_number.
+  Accepts an optional second parameter for how many results to return. Default is 2.
 
   ## Examples
 
@@ -29,22 +29,22 @@ defmodule Remote.Users do
   end
 
   @doc """
-  Updates all users with a random :points number (1..100)
+  Updates all users with a random :points number (1..100).
 
   ## Examples
 
       iex> update_all_users()
-      {:ok, 1000000}
+      {1000000, nil}
   """
   def update_all_users() do
     User
     |> update(set: [points: fragment("floor(random() * 101)")])
     |> Repo.update_all([])
-    |> IO.inspect()
   end
 
   @doc """
   Creates a user.
+
   ## Examples
       iex> create_user(%{field: value})
       {:ok, %User{}}
