@@ -4,8 +4,9 @@ defmodule Remote.Users do
   """
 
   import Ecto.Query, warn: false
-  alias Remote.Repo
 
+  alias Remote.Repo
+  alias Remote.Time
   alias Remote.Users.User
 
   @doc """
@@ -37,8 +38,10 @@ defmodule Remote.Users do
       {1000000, nil}
   """
   def update_all_users() do
+    now = Time.utc_now()
+
     User
-    |> update(set: [points: fragment("floor(random() * 101)")])
+    |> update(set: [points: fragment("floor(random() * 101)"), updated_at: ^now])
     |> Repo.update_all([])
   end
 
