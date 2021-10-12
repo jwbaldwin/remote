@@ -38,7 +38,7 @@ defmodule Remote.Users do
   """
   def update_all_users() do
     User
-    |> update(set: [points: fragment("floor(random() * 100)")])
+    |> update(set: [points: fragment("floor(random() * 101)")])
     |> Repo.update_all([])
     |> IO.inspect()
   end

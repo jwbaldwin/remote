@@ -16,6 +16,10 @@ defmodule Remote.RemoteServer do
           users: [User.t()]
         }
 
+  #
+  # Client
+  #
+
   @doc """
   Overriding default child_spec/1 to provide inital values and configuration
   """
@@ -50,10 +54,6 @@ defmodule Remote.RemoteServer do
     end
   end
 
-  #
-  # Client functions
-  #
-
   @doc """
   Request all users with points more than max_number and return 2
   """
@@ -86,8 +86,6 @@ defmodule Remote.RemoteServer do
 
   @impl true
   def handle_info(:update_server, state) do
-    IO.puts("Here we update every record in the database and update the max_number")
-
     Users.update_all_users()
 
     new_state = state |> update_timestamp()
