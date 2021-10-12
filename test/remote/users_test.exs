@@ -8,16 +8,27 @@ defmodule Remote.UsersTest do
 
     import Remote.UsersFixtures
 
-    @invalid_attrs %{points: nil}
+    test "find_users/1 returns two users when exactly two users have points greater than max_number" do
+      [_user_1, user_2, user_3] =
+        multi_user_fixture(3, [%{points: 1}, %{points: 2}, %{points: 3}])
 
-    test "list_users/0 returns all users" do
-      user = user_fixture()
-      assert Users.list_users() == [user]
+      max_number = 1
+
+      assert Users.find_users(max_number) == [user_2, user_3]
     end
 
-    test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
-      assert Users.get_user!(user.id) == user
+    test "find_users/1 no users when no user has points greater than max_number" do
+      _users = multi_user_fixture(3, [%{points: 1}, %{points: 2}, %{points: 3}])
+      max_number = 4
+
+      assert Users.find_users(max_number) == []
+    end
+
+    test "find_users/1 returns one user when only one has points greater than max_number" do
+      [user_1 | _] = multi_user_fixture(3, [%{points: 100}, %{points: 0}, %{points: 0}])
+      max_number = 99
+
+      assert Users.find_users(max_number) == [user_1]
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -27,33 +38,8 @@ defmodule Remote.UsersTest do
       assert user.points == 42
     end
 
-    test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Users.create_user(@invalid_attrs)
-    end
-
-    test "update_user/2 with valid data updates the user" do
-      user = user_fixture()
-      update_attrs = %{points: 43}
-
-      assert {:ok, %User{} = user} = Users.update_user(user, update_attrs)
-      assert user.points == 43
-    end
-
-    test "update_user/2 with invalid data returns error changeset" do
-      user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Users.update_user(user, @invalid_attrs)
-      assert user == Users.get_user!(user.id)
-    end
-
-    test "delete_user/1 deletes the user" do
-      user = user_fixture()
-      assert {:ok, %User{}} = Users.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
-    end
-
-    test "change_user/1 returns a user changeset" do
-      user = user_fixture()
-      assert %Ecto.Changeset{} = Users.change_user(user)
+    test "create_user/1 with points greater than 100 returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Users.create_user(%{points: 101})
     end
   end
 end

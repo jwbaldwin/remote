@@ -5,6 +5,24 @@ defmodule Remote.UsersFixtures do
   """
 
   @doc """
+  Generates n amounts of users with the option to provide attrs (must be provided in order)
+
+  ## Examples
+
+
+    iex> multi_user_fixture(2)
+    [%User{}, %User{}]
+
+    iex> multi_user_fixture(3, [%{points: 1}, %{points: 2}, %{points: 3}])
+    [%User{..., points: 1}, %User{..., points: 2}, %User{..., points: 3}]
+  """
+  def multi_user_fixture(number_of_users, attrs \\ []) do
+    for i <- 0..(number_of_users - 1) do
+      user_fixture(Enum.at(attrs, i, %{}))
+    end
+  end
+
+  @doc """
   Generate a user.
   """
   def user_fixture(attrs \\ %{}) do
