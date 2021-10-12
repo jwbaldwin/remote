@@ -8,6 +8,7 @@ defmodule Mix.Tasks.Remote.Db.Seeds do
   use Mix.Task
   alias Remote.Repo
   alias Remote.Users.User
+  alias Remote.Time
 
   # PostgreSQL limits the maximum parameters allowed to 65535
   # And we have 3 parameters for each user (:points, :inserted_at, :updated_at)
@@ -26,7 +27,7 @@ defmodule Mix.Tasks.Remote.Db.Seeds do
   """
   @spec seed(:dev | :prod | :test) :: :ok
   def seed(_environment) do
-    now = current_datetime()
+    now = Time.utc_now()
 
     users =
       1..@total_users
@@ -34,11 +35,11 @@ defmodule Mix.Tasks.Remote.Db.Seeds do
 
     # This chunks our users into manageable batches before we insert
     Enum.chunk_every(users, @batch_size)
-    |> Enum.each(fn chunk_of_users -> Repo.insert_all(User, chunk_of_users) end)
-  end
+    |> Task.async_stream(fn chunk_of_users ->
+      Repo.insert_all(User, chunk_of_users)
+    end)
+    |> Enum.to_list()
 
-  defp current_datetime() do
-    DateTime.utc_now()
-    |> DateTime.truncate(:second)
+    :ok
   end
 end

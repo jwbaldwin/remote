@@ -9,6 +9,7 @@ defmodule Remote.RemoteServer do
   alias __MODULE__
   alias Remote.Users
   alias Remote.Users.User
+  alias Remote.Time
 
   @type server_response :: %{
           timestamp: DateTime.t() | nil,
@@ -110,13 +111,7 @@ defmodule Remote.RemoteServer do
   end
 
   defp update_timestamp(state) do
-    %{state | timestamp: current_time()}
-  end
-
-  @doc false
-  defp current_time() do
-    DateTime.utc_now()
-    |> DateTime.truncate(:second)
+    %{state | timestamp: Time.utc_now()}
   end
 
   @doc false
