@@ -46,9 +46,13 @@ No users, and no previous query:
 I created a [Livebook](https://github.com/elixir-nx/livebook) notebook to document the api logic as well as the GenServer logic!
 These notebooks can be opened them with Livebook, and follow [this guide](https://fly.io/blog/livebook-for-app-documentation/) from fly.io to run this notebook within the context of the appliction.
 
-If you already have `livebook` installed, run it in the root directory of this project, and you can open the notebook from the UI.  You will find the notebook in the `notebook/` folder.
+If you already have `livebook` installed:
+  * Run it in the root directory of this project
+  * Open the link that is provided in the console
+  * Either hit `import` or navigate inside of `notebook` directory and select the `remote_server_and_api.livemd` and press `open`
+  * Navigate through the notebook with the sections
+  * To evaluate the entire notebook in one go, use the command `ea`
 
-To evaluate the entire notebook in one go, use the command `ea`
 
 ## Production
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
