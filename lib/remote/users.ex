@@ -29,6 +29,21 @@ defmodule Remote.Users do
   end
 
   @doc """
+  Updates all users with a random :points number (1..100)
+
+  ## Examples
+
+      iex> update_all_users()
+      {:ok, 1000000}
+  """
+  def update_all_users() do
+    User
+    |> update(set: [points: fragment("floor(random() * 100)")])
+    |> Repo.update_all([])
+    |> IO.inspect()
+  end
+
+  @doc """
   Creates a user.
   ## Examples
       iex> create_user(%{field: value})

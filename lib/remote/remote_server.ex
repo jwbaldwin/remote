@@ -1,4 +1,4 @@
-defmodule Points.RemoteServer do
+defmodule Remote.RemoteServer do
   @moduledoc """
   A GenServer that maintains a random number and the last time the server was queried for information
   """
@@ -89,6 +89,7 @@ defmodule Points.RemoteServer do
     IO.puts("Here we update every record in the database and update the max_number")
 
     Users.update_all_users()
+
     new_state = state |> update_timestamp()
 
     schedule_update()

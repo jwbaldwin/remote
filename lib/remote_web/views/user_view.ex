@@ -2,12 +2,8 @@ defmodule RemoteWeb.UserView do
   use RemoteWeb, :view
   alias RemoteWeb.UserView
 
-  def render("index.json", %{users: users}) do
-    %{data: render_many(users, UserView, "user.json")}
-  end
-
-  def render("show.json", %{user: user}) do
-    %{data: render_one(user, UserView, "user.json")}
+  def render("index.json", %{users: users, timestamp: timestamp}) do
+    %{users: render_many(users, UserView, "user.json"), timestamp: timestamp}
   end
 
   def render("user.json", %{user: user}) do
