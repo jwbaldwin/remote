@@ -10,6 +10,7 @@ defmodule Points.RemoteServer do
   alias Remote.Users
   alias Remote.Users.User
 
+  @one_minute 1000 * 60
   @type server_response :: %{
           timestamp: DateTime.t() | nil,
           users: [User.t()]
@@ -68,6 +69,9 @@ defmodule Points.RemoteServer do
 
   @impl true
   def init(%{max_number: _max_number, timestamp: nil} = initial_state) do
+    # Schedule periodic server update
+    schedule_update()
+
     {:ok, initial_state}
   end
 
@@ -75,9 +79,30 @@ defmodule Points.RemoteServer do
   def handle_call(:users, _from, state) do
     users = Users.find_users(state.max_number)
 
-    new_state = %{state | timestamp: current_time()}
+    new_state = state |> update_timestamp()
 
     {:reply, %{users: users, timestamp: state.timestamp}, new_state}
+  end
+
+  @impl true
+  def handle_info(:update_server, state) do
+    IO.puts("Here we update every record in the database and update the max_number")
+
+    Users.update_all_users()
+    new_state = state |> update_timestamp()
+
+    schedule_update()
+
+    {:noreply, new_state}
+  end
+
+  @doc false
+  defp schedule_update() do
+    Process.send_after(self(), :update_server, @one_minute)
+  end
+
+  defp update_timestamp(state) do
+    %{state | timestamp: current_time()}
   end
 
   @doc false
