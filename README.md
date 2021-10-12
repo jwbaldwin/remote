@@ -33,7 +33,7 @@ Calling this endpoints at `localhost:4000/` yeilds the result:
 I created a [Livebook](https://github.com/elixir-nx/livebook) notebook to document the api logic as well as the GenServer logic!
 These notebooks can be opened them with Livebook, and follow [this guide](https://fly.io/blog/livebook-for-app-documentation/) from fly.io to run this notebook within the context of the appliction.
 
-You will find it in the notebook folder.
+If you already have `livebook` installed, run it in the root directory of this project, and you can open the notebook from the UI.  You will find the notebook in the `notebook/` folder.
 
 To evaluate the entire notebook in one go, use the command `ea`
 

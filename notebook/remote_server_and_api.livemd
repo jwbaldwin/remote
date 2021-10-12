@@ -1,0 +1,133 @@
+# Remote server and API
+
+## Server Explanation
+
+The heart of this application is the `RemoteServer` module. This modules implements the `GenServer` behaviour and maintains the `RemoteServer.State`
+
+The core api of `RemoteServer` consists of only a few functions:
+
+* `init/1`
+* `handle_cast/3`
+* `handle_info/2`
+
+Let's take a look at them!
+
+## RemoteServer State
+
+The RemoteServer.State is a struct that looks like:
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+%RemoteServer.State{
+  :max_number,
+  :timestamp
+}
+```
+
+This state is mutated every minute when `handle_info/2` is called. This function is scheduled to be called every minute.
+
+## init/1
+
+Here is the function definition
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+@impl true
+def init(%State{max_number: _max_number, timestamp: nil} = initial_state) do
+  # Schedule periodic server update
+  schedule_update()
+
+  {:ok, initial_state}
+end
+```
+
+Let's walk through this. First, `init/1` accepts the `RemoteServer.State` struct that we saw above.
+Immediatly the function calls `schedule_update/0` which will wait a minute before sending a message that is caught by `handle_info/2`.
+
+Finally, it returns the `{:ok, initial_state}` tuple that kicks off the genserver. You can see this in action below!
+
+```elixir
+Remote.RemoteServer.init(%Remote.RemoteServer.State{max_number: 5, timestamp: nil})
+```
+
+## handle_cast/3
+
+Here is the function definition
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+  @impl true
+  def handle_call(:find_users, _from, state) do
+    users = Users.find_users(state.max_number)
+
+    new_state = state |> update_timestamp()
+
+    {:reply, %{users: users, timestamp: state.timestamp}, new_state}
+  end
+```
+
+This function actually gets called by a client-facing function called `find_users/0` which resides in the same module. As we can see,
+This function calls into the `users` context and retrieves potentially two users that match the criteria. Next we update the timestamp in our state.
+Finally, we return to teh calling process our result and pass in our new state.
+
+## handle_info/2
+
+Here are the important functions definitions
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+  @impl true
+  def handle_info(:update_server, state) do
+    Users.update_all_users()
+
+    new_state = state |> update_timestamp()
+
+    schedule_update()
+
+    {:noreply, new_state}
+  end
+
+  @doc false
+  defp schedule_update() do
+    Process.send_after(self(), :update_server, interval())
+  end
+```
+
+As mentioned above, `schedule_update/0` is initially called in `init/1`. After one minute (in dev and prod), `schedule_update/0` sends
+a message to itself with the request of `:update_server`.
+
+This message matches `handle_info/2` as you see above, which performs the work, updates the state, and then schedules the work again.
+
+## API Explanation
+
+The client entrypoint into our application, the api for this application only exposes a single true route.
+This route ("/") will query the `RemoteServer` for any user with a `points` value greater than the `RemoteServer.State.max_number`, returning up to two. And the server will also return the timestamp of the previous time the `RemoteServer` was queried or updated by itself.
+
+```elixir
+import Plug.Conn
+conn = Phoenix.ConnTest.build_conn()
+
+path = RemoteWeb.Router.Helpers.user_path(conn, :index)
+```
+
+This route returns a response of the shape:
+
+```json
+{
+  "users": [],
+  "timestmap": nil
+}
+```
+
+Another example of a result. This time with the timestamp of the previous query, and some user results:
+
+```json
+{
+  "timestamp": "2021-10-12T15:50:52Z",
+  "users": [{"id":998972,"points":97},{"id":998983,"points":97}]
+}
+```
