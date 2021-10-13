@@ -22,6 +22,7 @@ defmodule Remote.Users do
       [%User{}]
 
   """
+  @spec find_users(pos_integer(), any) :: any
   def find_users(max_number, results_limit \\ 2) do
     User
     |> where([u], u.points > ^max_number)

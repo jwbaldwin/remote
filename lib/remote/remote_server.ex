@@ -78,6 +78,7 @@ defmodule Remote.RemoteServer do
   #
 
   @impl true
+  @spec init(Remote.RemoteServer.State.t()) :: {:ok, Remote.RemoteServer.State.t()}
   def init(%State{max_number: _max_number, timestamp: nil} = initial_state) do
     # Schedule periodic server update
     schedule_update()
