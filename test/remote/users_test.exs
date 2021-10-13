@@ -31,6 +31,17 @@ defmodule Remote.UsersTest do
       assert Users.find_users(max_number) == [user_1]
     end
 
+    test "update_all_users/0 updates the users points" do
+      users = multi_user_fixture(3, [%{points: 0}, %{points: 0}, %{points: 0}])
+
+      Users.update_all_users()
+
+      # If the update doesn't happen, no users have points > 0
+      max_number = 0
+
+      assert Users.find_users(max_number) != []
+    end
+
     test "create_user/1 with valid data creates a user" do
       valid_attrs = %{points: 42}
 
