@@ -23,7 +23,7 @@ To view this route run: `mix phx.routes`
     user_path  GET  /                       RemoteWeb.UserController :index
 ```
 
-Calling this endpoints at [`localhost:4000/`](http://localhost:4000/)` yeilds a result that looks like any of the following:
+Calling this endpoints at [`localhost:4000/`](http://localhost:4000/) yeilds a result that looks like any of the following:
 
 Users and a previous querie's timestamp:
 ```
@@ -44,12 +44,12 @@ No users, and no previous query:
 
 ## Livebook Notebook
 I created a [Livebook](https://github.com/elixir-nx/livebook) notebook to document the api logic as well as the GenServer logic!
-These notebooks can be opened them with Livebook, and follow [this guide](https://fly.io/blog/livebook-for-app-documentation/) from fly.io to run this notebook within the context of the appliction.
+These notebooks can be opened via Livebook, follow [this guide](https://fly.io/blog/livebook-for-app-documentation/) from fly.io to run this notebook within the context of the appliction.
 
 If you already have `livebook` installed:
   * Run it in the root directory of this project
   * Open the link that is provided in the console
-  * Either hit `import` or navigate inside of `notebook` directory and select the `remote_server_and_api.livemd` and press `open`
+  * Either hit `import` or navigate inside of the `notebook` directory and select the `remote_server_and_api.livemd` and press `open`
   * Navigate through the notebook with the sections
   * To evaluate the entire notebook in one go, use the command `ea`
 
